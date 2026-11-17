@@ -124,9 +124,9 @@ When the index publishes a new version, its URL changes and the next `apply` rep
 (`create_before_destroy`: the new one is created before the old one is deleted). Run `plan`
 first if servers reference the image ID.
 
-`web_download` lets Glance fetch the image itself. Glance fetches with the default Python
-User-Agent (`Python-urllib`), which images.openimages.cloud currently refuses (HTTP 403): until
-that changes, keep the default (`web_download = false`).
+`web_download` lets Glance fetch the image itself, when the cloud offers the `web-download`
+import method: nothing goes through the machine running Terraform. The default
+(`web_download = false`) works on every cloud.
 
 ### Integrity
 

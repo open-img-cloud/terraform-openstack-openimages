@@ -79,7 +79,7 @@ variable "tags" {
 }
 
 variable "web_download" {
-  description = "Let Glance download the images itself (web-download import method, must be enabled on the cloud). When false, the provider downloads each image to image_cache_path, then uploads it. Note: images.openimages.cloud currently answers 403 to the Python-urllib User-Agent Glance uses."
+  description = "Let Glance download the images itself (web-download import method, must be enabled on the cloud). When false, the provider downloads each image to image_cache_path, then uploads it."
   type        = bool
   default     = false
 }
