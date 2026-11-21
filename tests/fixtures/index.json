@@ -107,7 +107,18 @@
             "oic_sha256": "88aaf24f4b7296e367e1470033916cdb3e97b893d597afb4315e23ed5bfe45e2"
           }
         }
-      ]
+      ],
+      "support": {
+        "product": "alpine-linux",
+        "release": "3.24",
+        "active_until": null,
+        "security_until": "2028-06-01",
+        "extended_until": null,
+        "is_eol": false,
+        "eol_soon": false,
+        "follows_releases": true,
+        "source": "https://endoflife.date/alpine-linux"
+      }
     },
     {
       "id": "debian-13",
@@ -172,7 +183,18 @@
             "oic_sha256": "6706a0cddad28e3184586d3043949f9ce1223e7fc53ae8425993ae1d822a0822"
           }
         }
-      ]
+      ],
+      "support": {
+        "product": "debian",
+        "release": "13",
+        "active_until": null,
+        "security_until": "2026-06-30",
+        "extended_until": null,
+        "is_eol": true,
+        "eol_soon": false,
+        "follows_releases": false,
+        "source": "https://endoflife.date/debian"
+      }
     }
   ]
 }

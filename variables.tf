@@ -20,6 +20,17 @@ variable "architecture" {
   default     = "x86_64"
 }
 
+variable "eol" {
+  description = "Images whose upstream release is past its end of life (endoflife.date dates published in the index): \"warn\" imports them and lists them in the end_of_life output, \"skip\" leaves them out, \"fail\" stops the plan."
+  type        = string
+  default     = "warn"
+
+  validation {
+    condition     = contains(["warn", "skip", "fail"], var.eol)
+    error_message = "eol must be warn, skip or fail."
+  }
+}
+
 variable "index_url" {
   description = "URL of the catalog index (schema oic-index/v1). Change it to use a mirror."
   type        = string
