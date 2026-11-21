@@ -38,10 +38,30 @@ locals {
   index   = jsondecode(var.index_json != null ? var.index_json : data.http.index[0].response_body)
   catalog = { for img in local.index.images : img.id => img }
 
+  # Upstream support of each requested image (endoflife.date dates published in the index; null
+  # when the index has none). An image id missing from the index is reported by data.http.index.
+  support = {
+    for id in distinct(var.images) : id => try({
+      release        = tostring(local.catalog[id].support.release)
+      security_until = try(tostring(local.catalog[id].support.security_until), null)
+      is_eol         = try(local.catalog[id].support.is_eol == true, false)
+      eol_soon       = try(local.catalog[id].support.eol_soon == true && local.catalog[id].support.is_eol != true, false)
+      source         = try(tostring(local.catalog[id].support.source), null)
+    }, null)
+  }
+  eol_ids = [for id, s in local.support : id if try(s.is_eol, false)]
+  eol_warnings = [
+    for id, s in local.support :
+    "${id}: release ${s.release} ${s.is_eol ? "reached its upstream end of life on" : "reaches its upstream end of life on"} ${coalesce(s.security_until, "an unknown date")}"
+    if try(s.is_eol || s.eol_soon, false)
+  ]
+  # var.eol = "skip": images past their end of life are left out.
+  selected = [for id in distinct(var.images) : id if !(var.eol == "skip" && contains(local.eol_ids, id))]
+
   # One entry per artifact to import, keyed like oic-sync labels: "debian-13", "alpine-linux/uefi".
   # An image id missing from the index fails here ("The given key does not identify an element").
   artifacts = merge([
-    for id in distinct(var.images) : {
+    for id in local.selected : {
       for a in local.catalog[id].artifacts :
       (a.variant == null ? id : "${id}/${a.variant}") => {
         oic_id  = id
@@ -114,6 +134,11 @@ resource "openstack_images_image_v2" "this" {
   lifecycle {
     # Create the new version before deleting the old one.
     create_before_destroy = true
+
+    precondition {
+      condition     = var.eol != "fail" || !contains(local.eol_ids, each.value.oic_id)
+      error_message = "${each.value.oic_id} is past its upstream end of life (eol = \"fail\"): ${join("; ", local.eol_warnings)}. Set eol = \"warn\" to import it anyway or \"skip\" to leave it out."
+    }
 
     # self.status is unknown until the image exists: both checks run once the image is active.
     postcondition {

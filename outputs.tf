@@ -38,3 +38,13 @@ output "index_generated_at" {
   description = "generated_at of the catalog index that was read."
   value       = local.index.generated_at
 }
+
+output "support" {
+  description = "Upstream support of each requested image (endoflife.date, from the index): release, security_until, is_eol, eol_soon, source; null when the index has none."
+  value       = local.support
+}
+
+output "end_of_life" {
+  description = "Images past or within six months of their upstream end of life, one message each. Empty when there is nothing to plan."
+  value       = local.eol_warnings
+}

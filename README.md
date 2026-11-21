@@ -203,6 +203,7 @@ For a multi-variant image, add `oic_variant = "uefi"` to `properties`.
 | `images` | Image ids of the catalog to import, e.g. `["debian-13", "ubuntu-24.04"]`. | `list(string)` | n/a | yes |
 | `variants` | Variants to keep for multi-variant images, by image id, e.g. `{ "alpine-linux" = ["uefi"] }`. Images not listed get every variant. | `map(list(string))` | `{}` | no |
 | `architecture` | Artifact architecture to import. | `string` | `"x86_64"` | no |
+| `eol` | Images past their upstream end of life ([endoflife.date](https://endoflife.date) dates of the index): `warn` imports them and lists them in `end_of_life`, `skip` leaves them out, `fail` stops the plan. | `string` | `"warn"` | no |
 | `index_url` | URL of the catalog index (schema `oic-index/v1`). Change it to use a mirror. | `string` | `"https://images.openimages.cloud/index.json"` | no |
 | `index_json` | Content of a catalog index to use instead of fetching `index_url`, e.g. `file("index.json")`. | `string` | `null` | no |
 | `name_prefix` | Prefix added to every Glance image name. | `string` | `""` | no |
@@ -228,6 +229,8 @@ For a multi-variant image, add `oic_variant = "uefi"` to `properties`.
 | `sha256` | sha256 of the qcow2 by artifact key (`oic_sha256`, covered by the cosign signature). |
 | `images` | `id`, `name`, `oic_id`, `variant`, `version`, `sha256`, `sha512` and `url` by artifact key. |
 | `index_generated_at` | `generated_at` of the index that was read. |
+| `support` | Upstream support by image id: `release`, `security_until`, `is_eol`, `eol_soon`, `source` (`null` when the index has none). |
+| `end_of_life` | One message per image past or within six months of its upstream end of life; empty when there is nothing to plan. |
 
 Checked against the documentation and source of terraform-provider-openstack v3.4.0
 (`openstack_images_image_v2`: `web_download` conflicts with `verify_checksum`; properties

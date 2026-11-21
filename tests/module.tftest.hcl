@@ -147,6 +147,66 @@ run "unknown_image_rejected" {
   expect_failures = [data.http.index[0]]
 }
 
+# The fixture marks debian-13 as past its end of life (fictional) to exercise var.eol.
+run "eol_warn_imports_and_reports" {
+  command = plan
+
+  variables {
+    images = ["debian-13", "alpine-linux"]
+  }
+
+  assert {
+    condition     = contains(keys(output.versions), "debian-13")
+    error_message = "eol = warn must keep debian-13."
+  }
+
+  assert {
+    condition     = output.end_of_life == ["debian-13: release 13 reached its upstream end of life on 2026-06-30"]
+    error_message = "end_of_life must list debian-13 only."
+  }
+
+  assert {
+    condition     = output.support["alpine-linux"].release == "3.24" && output.support["debian-13"].is_eol
+    error_message = "support must carry the index dates."
+  }
+}
+
+run "eol_skip_leaves_out" {
+  command = plan
+
+  variables {
+    images = ["debian-13", "alpine-linux"]
+    eol    = "skip"
+  }
+
+  assert {
+    condition     = !contains(keys(output.versions), "debian-13") && contains(keys(output.versions), "alpine-linux/uefi")
+    error_message = "eol = skip must leave debian-13 out and keep alpine-linux."
+  }
+}
+
+run "eol_fail_stops" {
+  command = plan
+
+  variables {
+    images = ["debian-13"]
+    eol    = "fail"
+  }
+
+  expect_failures = [openstack_images_image_v2.this]
+}
+
+run "eol_invalid_value" {
+  command = plan
+
+  variables {
+    images = ["debian-13"]
+    eol    = "ignore"
+  }
+
+  expect_failures = [var.eol]
+}
+
 # Mocks cannot return the server-side properties (os_hash_algo, os_hash_value) that a real Glance
 # adds: the digest comparison itself is only exercised against a real cloud. These runs check
 # that the postconditions are wired: no multihash fails by default, a wrong size always fails.
