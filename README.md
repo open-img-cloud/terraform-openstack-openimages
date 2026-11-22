@@ -19,6 +19,13 @@
   <a href="https://github.com/open-img-cloud/terraform-openstack-openimages/issues">Report an issue</a>
 </p>
 
+> [!IMPORTANT]
+> **Archived: replaced by the [openimages provider](https://github.com/open-img-cloud/terraform-provider-openimages).**
+> Its data sources give the URL, checksums, oic-sync name and Glance properties of each
+> catalog image; [`examples/openstack-catalog`](https://github.com/open-img-cloud/terraform-provider-openimages/tree/main/examples/openstack-catalog)
+> does what this module did (several images into Glance, end-of-life images left out,
+> digest check).
+
 Terraform and OpenTofu module that imports the signed, boot-tested cloud images of
 [openimages.cloud](https://openimages.cloud) into OpenStack Glance, with the right Glance
 properties.
